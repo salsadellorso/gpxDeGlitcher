@@ -42,7 +42,7 @@ public class UploadFileController extends Controller {
     }
 
     public Result downloadFile(){
-       return ok(new File(globalsavedfilename));
+       return ok(new File(globalsavedfilename), false);
 
     }
 
