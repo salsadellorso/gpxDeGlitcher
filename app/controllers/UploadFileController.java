@@ -7,6 +7,7 @@ package controllers;
 
 import com.google.common.io.Files;
 import gpswork.smoother;
+import io.jenetics.jpx.Track;
 import play.*;
 import play.data.DynamicForm;
 import play.mvc.*;
@@ -14,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
+
 import Storage.Storage;
 
 import views.html.*;
@@ -39,7 +42,7 @@ public class UploadFileController extends Controller {
     }
 
     public Result downloadFile(){
-       return ok(Storage.storage.get(globalsavedfilename));
+       return ok(new File(globalsavedfilename));
 
     }
 
@@ -60,15 +63,17 @@ public class UploadFileController extends Controller {
 
             globalfilename = String.format("%d-%s", index, fileName);
             globalsavedfilename = String.format("%s-%s", globalfilename, "result");
+
             points = smoother.doTheWork(globalfilename, globalsavedfilename);
           //  Files.copy(savedFile, new File(globalsavedfilename));
             index++;
 
 
+
             }
             catch(IOException e) {System.out.println("ass");}
 
-            return ok(resultgpx.render("zz" + points));
+            return ok(resultgpx.render(points));
 
         } else {
             flash("error!", "Missing file");

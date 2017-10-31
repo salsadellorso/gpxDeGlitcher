@@ -73,10 +73,11 @@ public class smoother {
 
         TrackSegment resultSegment = TrackSegment.of(filteredBySpeed);
         Track resultTrack = Track.builder().addSegment(resultSegment).build();
-        GPX result = GPX.builder().addTrack(resultTrack).build();
 
+        GPX result = GPX.builder().addTrack(resultTrack).build();
         GPX.write(result, outputFileName);
         Storage.storage.put(outputFileName, new File(outputFileName));
+
         return String.format("%d", points.size()-filteredBySpeed.size());
 
         }
