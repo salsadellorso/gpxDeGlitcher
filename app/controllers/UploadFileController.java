@@ -51,27 +51,13 @@ public class UploadFileController extends Controller {
 
         File toReturn = null;
 
-        try {PrintWriter pw = new PrintWriter("toReturn.txt");
-                 pw.println("HERAKUAAAAAAAAAAAAAAAAAA");
-                 pw.flush();
-                 pw.close();
-                 toReturn = new File("toReturn.txt");
-                 System.out.println("test file written" + toReturn.length());
-
-                 Scanner sc = new Scanner(toReturn);
-                 while(sc.hasNext()){
-                     System.out.println(sc.next());
-                 }
-                 sc.close();
-        } catch(IOException ex) {System.out.println("test file io error");}
-
-        try{GPX.write(resultstorage.get(globalsavedfilename), "yourresult.gpx");
+       try{GPX.write(resultstorage.get(globalsavedfilename), "yourresult.gpx");
             System.out.println("written ok");
         }
         catch (IOException e){
             System.out.println("cannpot write the file");
         }
-        return ok(toReturn);
+        return ok(new File("yourresult.gpx"));
 
     }
 
