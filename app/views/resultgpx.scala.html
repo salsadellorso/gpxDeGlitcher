@@ -1,4 +1,4 @@
-@(points: String, resultFile: String)
+@(points: String, resultfileinfo: String, resultFile: String)
 
 <!DOCTYPE html>
 
@@ -12,7 +12,7 @@
     <body>
         Here you can <a href = "/download">download</a> your result
         <p>
-            @points Points have been deleted
+            @points Points have been deleted,  ""  @resultfileinfo
         </p>
         @resultFile
         <p>

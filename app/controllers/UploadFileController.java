@@ -43,7 +43,7 @@ public class UploadFileController extends Controller {
     }
 
     public Result downloadFile(){
-       return ok(new File(globalsavedfilename), false);
+       return ok(new File(globalsavedfilename));
 
     }
 
@@ -75,13 +75,17 @@ public class UploadFileController extends Controller {
             catch(IOException e) {System.out.println("ass");}
 
             String resultFile = null;
+            String resultfileinfo = null;
+            String resultfileinfo1 = null;
             try {
-                resultFile = GPX.read(globalsavedfilename).getTracks().get(0).getSegments().get(0).getPoints().toString();
+                resultfileinfo = new File(globalsavedfilename).getPath();
+                resultfileinfo1 = new File(globalsavedfilename).getAbsolutePath();
+                resultFile = GPX.read(resultfileinfo).getTracks().get(0).getSegments().get(0).getPoints().toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return ok(resultgpx.render(points, resultFile));
+            return ok(resultgpx.render(points, resultfileinfo1, resultFile));
 
         } else {
             flash("error!", "Missing file");
