@@ -7,6 +7,6 @@ import views.html.*;
 public class ResultController extends Controller {
 
     public Result result(){
-        return ok(resultgpx.render("chuka"));
+        return ok(resultgpx.render("chuka", "c"));
     }
 }

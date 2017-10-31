@@ -7,6 +7,7 @@ package controllers;
 
 import com.google.common.io.Files;
 import gpswork.smoother;
+import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import play.*;
 import play.data.DynamicForm;
@@ -46,7 +47,7 @@ public class UploadFileController extends Controller {
 
     }
 
-    public Result uploadFormPost(){
+    public Result uploadFormPost() {
         String points = "NULL";
 
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
@@ -73,7 +74,14 @@ public class UploadFileController extends Controller {
             }
             catch(IOException e) {System.out.println("ass");}
 
-            return ok(resultgpx.render(points));
+            String resultFile = null;
+            try {
+                resultFile = GPX.read(globalsavedfilename).getTracks().get(0).getSegments().get(0).getPoints().toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return ok(resultgpx.render(points, resultFile));
 
         } else {
             flash("error!", "Missing file");
