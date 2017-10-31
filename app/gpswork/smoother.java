@@ -1,5 +1,6 @@
 package gpswork;
 
+import controllers.UploadFileController;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
@@ -75,6 +76,8 @@ public class smoother {
         Track resultTrack = Track.builder().addSegment(resultSegment).build();
 
         GPX result = GPX.builder().addTrack(resultTrack).build();
+        UploadFileController.resultstorage.put(outputFileName, result);
+
         GPX.write(result, outputFileName);
         Storage.storage.put(outputFileName, new File(outputFileName));
 

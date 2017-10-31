@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import Storage.Storage;
@@ -32,6 +34,7 @@ public class UploadFileController extends Controller {
     private static int index = 0;
     private static String globalfilename;
     private static String globalsavedfilename;
+    public static Map<String, GPX> resultstorage = new HashMap<>();
 
 
 
@@ -43,7 +46,14 @@ public class UploadFileController extends Controller {
     }
 
     public Result downloadFile(){
-       return ok(new File(globalsavedfilename));
+
+        try{GPX.write(resultstorage.get(globalsavedfilename), "yourresult.gpx");
+            System.out.println("written ok");
+        }
+        catch (IOException e){
+            System.out.println("cannpot write the file");
+        }
+        return ok(new File("yourresult.gpx"));
 
     }
 
