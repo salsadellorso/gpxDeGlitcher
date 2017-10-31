@@ -53,7 +53,7 @@ public class UploadFileController extends Controller {
         catch (IOException e){
             System.out.println("cannpot write the file");
         }
-        return ok(new File("thefile"));
+        return ok(new File("thefile.txt"));
 
     }
 
