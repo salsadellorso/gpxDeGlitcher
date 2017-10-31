@@ -14,10 +14,12 @@ import play.data.DynamicForm;
 import play.mvc.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import Storage.Storage;
@@ -47,13 +49,29 @@ public class UploadFileController extends Controller {
 
     public Result downloadFile(){
 
+        File toReturn = null;
+
+        try {PrintWriter pw = new PrintWriter("toReturn.txt");
+                 pw.println("HERAKUAAAAAAAAAAAAAAAAAA");
+                 pw.flush();
+                 pw.close();
+                 toReturn = new File("toReturn.txt");
+                 System.out.println("test file written" + toReturn.length());
+
+                 Scanner sc = new Scanner(toReturn);
+                 while(sc.hasNext()){
+                     System.out.println(sc.next());
+                 }
+                 sc.close();
+        } catch(IOException ex) {System.out.println("test file io error");}
+
         try{GPX.write(resultstorage.get(globalsavedfilename), "yourresult.gpx");
             System.out.println("written ok");
         }
         catch (IOException e){
             System.out.println("cannpot write the file");
         }
-        return ok(new File("thefile.txt"));
+        return ok(toReturn);
 
     }
 
