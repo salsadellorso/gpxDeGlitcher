@@ -79,6 +79,8 @@ public class smoother {
         UploadFileController.resultstorage.put(outputFileName, result);
 
         GPX.write(result, outputFileName);
+        UploadFileController.gpxResult = result;
+
         Storage.storage.put(outputFileName, new File(outputFileName));
 
         return String.format("%d", points.size()-filteredBySpeed.size());

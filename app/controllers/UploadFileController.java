@@ -19,6 +19,7 @@ import play.data.DynamicForm;
 import play.mvc.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -41,6 +42,11 @@ public class UploadFileController extends Controller {
     private static String globalsavedfilename;
     public static Map<String, GPX> resultstorage = new HashMap<>();
 
+    public static GPX gpxResult;
+
+
+    public static String resultString;
+
 
 
     @Inject
@@ -50,33 +56,41 @@ public class UploadFileController extends Controller {
     }
 
     public Result downloadFileAsStream() throws IOException{
-        File file = new File(globalsavedfilename);
-        Path path = file.toPath();
-        Source<ByteString, ?> source = FileIO.fromPath(path);
-        System.out.println(file.length() + " size of a result " + file.getName());
+      //  File file = new File(globalsavedfilename);
+     //   Path path = file.toPath();
+     //   Source<ByteString, ?> source = FileIO.fromPath(path);
+       // System.out.println(file.length() + " size of a result " + file.getName());
 
-        GPX resultGPX = resultstorage.get(globalsavedfilename);
+      //  GPX resultGPX = resultstorage.get(globalsavedfilename);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       /* ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(resultGPX);
+        File resultFile = new File(globalsavedfilename);
+        System.out.println(resultFile.length());
+        oos.writeObject(resultFile);
         oos.flush();
-        oos.close();
+        oos.close();*/
 
-        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+       // InputStream is = new ByteArrayInputStream(resultString.getBytes(StandardCharsets.UTF_8.name()));
+        //  InputStream is = new ByteArrayInputStream(baos.toByteArray());
+
+
+
         /*int i = 0;
         int size = 0;
         while (i!=-1) {
             i=is.read();
             size++;
-
         }
         System.out.println(is.equals(null) + "HELLO IS" + " size: "
                 + size + " avaliable: " + is.available() + "fileSize: " + new File(globalsavedfilename).length());*/
 
        // return ok().chunked(source).as("application/octet-stream");
 
-        return ok(is);
+        GPX.write(gpxResult, "yourResult.gpx");
+        File toReturn = new File("yourResult.gpx");
+
+        return ok(toReturn);
 
     }
 
@@ -116,8 +130,6 @@ public class UploadFileController extends Controller {
           //  Files.copy(savedFile, new File(globalsavedfilename));
             index++;
 
-
-
             }
             catch(IOException e) {System.out.println("ass");}
 
@@ -128,6 +140,7 @@ public class UploadFileController extends Controller {
                 resultfileinfo = new File(globalsavedfilename).getPath();
                 resultfileinfo1 = new File(globalsavedfilename).getAbsolutePath();
                 resultFile = GPX.read(resultfileinfo).getTracks().get(0).getSegments().get(0).getPoints().toString();
+                resultString = resultFile;
             } catch (IOException e) {
                 e.printStackTrace();
             }
