@@ -64,7 +64,7 @@ public class UploadFileController extends Controller {
         oos.close();
 
         InputStream is = new ByteArrayInputStream(baos.toByteArray());
-        int i = 0;
+        /*int i = 0;
         int size = 0;
         while (i!=-1) {
             i=is.read();
@@ -72,7 +72,7 @@ public class UploadFileController extends Controller {
 
         }
         System.out.println(is.equals(null) + "HELLO IS" + " size: "
-                + size + " avaliable: " + is.available() + "fileSize: " + new File(globalsavedfilename).length());
+                + size + " avaliable: " + is.available() + "fileSize: " + new File(globalsavedfilename).length());*/
 
        // return ok().chunked(source).as("application/octet-stream");
 
