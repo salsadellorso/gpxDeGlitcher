@@ -89,8 +89,9 @@ public class UploadFileController extends Controller {
 
         GPX.write(gpxResult, "yourResult.gpx");
         File toReturn = new File("yourResult.gpx");
+        InputStream is = new FileInputStream(toReturn);
 
-        return ok(toReturn);
+        return ok(is);
 
     }
 
