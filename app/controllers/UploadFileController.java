@@ -17,10 +17,8 @@ import play.api.http.HttpEntity;
 import play.api.mvc.ResponseHeader;
 import play.data.DynamicForm;
 import play.mvc.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -32,6 +30,7 @@ import views.html.*;
 import play.data.FormFactory;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -46,18 +45,38 @@ public class UploadFileController extends Controller {
 
     @Inject
     private FormFactory formFactory;
-
     public Result uploadFormPage() {
         return ok(uploadform.render());
     }
 
-
-    public Result downloadFileAsStream(){
+    public Result downloadFileAsStream() throws IOException{
         File file = new File(globalsavedfilename);
         Path path = file.toPath();
         Source<ByteString, ?> source = FileIO.fromPath(path);
         System.out.println(file.length() + " size of a result " + file.getName());
-        return ok().chunked(source).as("multipart/mixed");
+
+        GPX resultGPX = resultstorage.get(globalsavedfilename);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(resultGPX);
+        oos.flush();
+        oos.close();
+
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+        int i = 0;
+        int size = 0;
+        while (i!=-1) {
+            i=is.read();
+            size++;
+
+        }
+        System.out.println(is.equals(null) + "HELLO IS" + " size: "
+                + size + " avaliable: " + is.available() + "fileSize: " + new File(globalsavedfilename).length());
+
+       // return ok().chunked(source).as("application/octet-stream");
+
+        return ok(is);
 
     }
 
