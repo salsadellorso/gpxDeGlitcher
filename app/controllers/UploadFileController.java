@@ -57,7 +57,7 @@ public class UploadFileController extends Controller {
         Path path = file.toPath();
         Source<ByteString, ?> source = FileIO.fromPath(path);
         System.out.println(file.length() + " size of a result " + file.getName());
-        return ok().chunked(source).as("application/octet-stream");
+        return ok().chunked(source)/*.as("application/octet-stream")*/;
 
     }
 
