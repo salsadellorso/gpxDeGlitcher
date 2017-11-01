@@ -5,21 +5,25 @@ package controllers;
 
 
 
+import akka.stream.javadsl.FileIO;
+import akka.stream.javadsl.Source;
+import akka.util.ByteString;
 import com.google.common.io.Files;
 import gpswork.smoother;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import play.*;
+import play.api.http.HttpEntity;
+import play.api.mvc.ResponseHeader;
 import play.data.DynamicForm;
 import play.mvc.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Stream;
 
 import Storage.Storage;
@@ -45,6 +49,16 @@ public class UploadFileController extends Controller {
 
     public Result uploadFormPage() {
         return ok(uploadform.render());
+    }
+
+
+    public Result downloadFileAsStream(){
+        File file = new File(globalsavedfilename);
+        Path path = file.toPath();
+        Source<ByteString, ?> source = FileIO.fromPath(path);
+        System.out.println(file.length() + " size of a result " + file.getName());
+        return ok().chunked(source);
+
     }
 
     public Result downloadFile(){
