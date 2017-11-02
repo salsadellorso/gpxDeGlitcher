@@ -1,23 +1,21 @@
-@(points: String, resultfileinfo: String, resultFile: String)
+@(points: Integer, status: String)
 
 <!DOCTYPE html>
 
-
 <html>
-<head>
-    <title>the result</title>
-
-</head>
+    <head>
+        <title>the result</title>
+    </head>
 
     <body>
-         Here you can <a href = "/download" download = yourResult.gpx> download</a> your result
-        <p>
-            @points Points have been deleted,  ""  @resultfileinfo
-        </p>
-        @resultFile
-        <p>
 
+        @status
+
+        <p>
+            @points points have been deleted
         </p>
+
+        Now download updated file <a href = "/download" download = yourResult.gpx> here </a>
 
     </body>
 
