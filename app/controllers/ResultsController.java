@@ -40,6 +40,6 @@ public class ResultsController extends Controller {
         // TODO: close InputStream?
         // TODO: delete temporary and uploaded files?
 
-        return is == null ? badRequest(CUSTOM_ERROR_MESSAGE): ok(is);
+        return is == null || gpxResult==null ? badRequest(CUSTOM_ERROR_MESSAGE): ok(is);
     }
 }
