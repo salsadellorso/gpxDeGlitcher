@@ -32,7 +32,11 @@ public class ResultsController extends Controller {
         } catch(IOException e) {
             e.printStackTrace();
             System.out.println("o_o: can't write or create InputStream in ResultsController.downloadFileAsStream()");
+        } finally {
+            Storage.gpxResult = null;
+            Storage.numberOfPointsDeleted = null;
         }
+
         // TODO: close InputStream?
         // TODO: delete temporary and uploaded files?
 

@@ -15,7 +15,7 @@ import storage.Storage;
 public class GpxDeGlitcher {
 
     public static final double CEILING = Double.MAX_VALUE;
-    public static final double FLAT_CUTOFF = 15;
+    public static double flat_cutoff;
     public static final double VICINITY_IN_TIME = 2;
 
     private static Integer outliersTotal = null;
@@ -40,7 +40,8 @@ public class GpxDeGlitcher {
      * @throws IOException
      */
 
-    public static GPX smooth(String inputFileName) throws IOException {
+    public static GPX smooth(String inputFileName, double desiredCutoff) throws IOException {
+        flat_cutoff = desiredCutoff;
         GPX source = GPX.read(inputFileName);
         List<Track> tracks = source.getTracks();
         List<WayPoint> originalPoints = new ArrayList<>();
@@ -62,7 +63,7 @@ public class GpxDeGlitcher {
             WayPoint p1 = originalPoints.get(i);
             double speed = CEILING;
             int j = i;
-            while(speed > FLAT_CUTOFF) {
+            while(speed > flat_cutoff) {
                 j++;
                 if(j == pointsTotal-1) break;
                 WayPoint p2 = originalPoints.get(j);
@@ -81,10 +82,10 @@ public class GpxDeGlitcher {
         }
 
     /** @return the number of bad points,
-     * could be called only once and after {@link GpxDeGlitcher#smooth(java.lang.String)}
+     * could be called only once and after {@link GpxDeGlitcher#smooth(java.lang.String, double)}
      * method
      */
-    public static Integer pointsDeleted(){
+    public static Integer numberOfPointsDeleted(){
         Integer pointsDeleted = new Integer(outliersTotal);
         outliersTotal = null;
         return pointsDeleted;

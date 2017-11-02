@@ -1,18 +1,27 @@
 package controllers;
 
+
+
 import gpswork.GpxDeGlitcher;
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import storage.Storage;
 import play.mvc.*;
 import java.io.*;
 import views.html.*;
 
-import static gpswork.GpxDeGlitcher.pointsDeleted;
+
+import javax.inject.Inject;
+
+import static gpswork.GpxDeGlitcher.numberOfPointsDeleted;
 import static gpswork.GpxDeGlitcher.smooth;
 
 public class UploadFileController extends Controller {
 
-    //TODO: proocessFile method refers to Storage class, mb not good
+    //TODO: processFile method refers to Storage class directly, but using Guice seems messy
 
+    @Inject
+    private FormFactory formFactory;
     private static final String CUSTOM_ERROR_MESSAGE = "o_o: file is missing";
 
 
@@ -20,8 +29,9 @@ public class UploadFileController extends Controller {
         return ok(uploadform.render());
     }
 
-    /** Passes uploaded file to static method {@link GpxDeGlitcher#smooth(java.lang.String)}
-     * then renders result page
+    /** Passes uploaded file to static method {@link GpxDeGlitcher#smooth(java.lang.String, double)},
+     * asks for a number of bad points and
+     * then renders the result page
      */
 
     public Result processFile() {
@@ -31,15 +41,17 @@ public class UploadFileController extends Controller {
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> preFile = body.getFile("fileField");
 
+        DynamicForm requestData = formFactory.form().bindFromRequest();
+        Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
+
         if (preFile != null) {
             try{
-               Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath());
-               points = Storage.pointsDeleted = pointsDeleted();
-               //points = Storage.pointsDeleted;
-                } catch(IOException e) {
+               Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff);
+               points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
+               } catch(IOException e) {
                     e.printStackTrace();
                     System.out.println("o_o: problems with uploaded file");
-                }
+               }
 
             String status = Storage.gpxResult == null ? "Fail": "Success";
             return ok(resultgpx.render(points, status));

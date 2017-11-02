@@ -10,13 +10,22 @@
         <h1>Fixing your incorrect gpx data</h1>
 
         <p>
-        Upload your file here
+        Upload your file and choose FLAT_CUTOFF_SPEED
         </p>
 
         <form name = "uploadForm" method = "POST" enctype = multipart/form-data>
-            <input type = "file" name = "fileField" accept = ".gpx"/>
-            <input type = "submit" name = "submitButton" value = "upload and process"/>
+            <input type = "number" name = "desiredCutoff" placeholder = "14.5" value = "14.5" step="0.5" min="0"><br>
+            <input type = "file" name = "fileField" accept = ".gpx"/><br>
+            <input type = "submit" name = "submitButton" value = "upload and process"/><br>
         </form>
+
+        <p>
+            27.7 km/h is a world record speed for 1k<br>
+            15 km/h is your 4 min/km pace<br>
+            12 km/h is your 5 min/km pace<br>
+            10 km/h is your 6 min/km pace<br>
+            6 km/h is you walking fast<br>
+        </p>
 
     </body>
 
