@@ -1,44 +1,42 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import gpswork.GpxDeGlitcher;
+import io.jenetics.jpx.GPX;
 import org.junit.*;
 
-import play.mvc.*;
-import play.test.*;
-import play.data.DynamicForm;
-import play.data.validation.ValidationError;
-import play.data.validation.Constraints.RequiredValidator;
-import play.i18n.Lang;
-import play.libs.F;
-import play.libs.F.*;
+import static junit.framework.TestCase.assertTrue;
 
-import static play.test.Helpers.*;
-import static org.fest.assertions.Assertions.*;
-
-
-/**
-*
-* Simple (JUnit) tests that can call all parts of a play app.
-* If you are interested in mocking a whole application, see the wiki for more details.
-*
-*/
 public class ApplicationTest {
 
     @Test
-    public void simpleCheck() {
-        int a = 1 + 1;
-        assertThat(a).isEqualTo(2);
-    }
+    public void testGpxDeGlitcher() {
 
-    @Test
-    public void renderTemplate() {
-        Content html = views.html.index.render("Your new application is ready.");
-        assertThat(contentType(html)).isEqualTo("text/html");
-        assertThat(contentAsString(html)).contains("Your new application is ready.");
-    }
+        String filename = "yex.gpx";
+
+        try {
+            GPX gpx = GPX.builder()
+                    .addTrack(track -> track
+                            .addSegment(segment -> segment
+                                    .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160).time(ZonedDateTime.now()))
+                                    .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161).time(ZonedDateTime.now().plusMinutes(5)))
+                                    .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162).time(ZonedDateTime.now().plusMinutes(5)))))
+                    .build();
+            GPX.write(gpx, filename);
+            GPX fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16);
+
+            //and no weird exceptions must be thrown from above code refering to jpx library!
+            assertTrue(fromGpxDeGlitcher!=null);
+
+        } catch (IOException e){
+            System.out.println("o_o: smth weird happend, revisit testGpxDeGlitcher");
+        } finally{
+            new File(filename).delete();
+        }
+
+   }
 
 
 }

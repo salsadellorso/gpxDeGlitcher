@@ -1,6 +1,6 @@
 name := "gpxglitch"
  
-version := "1.0" 
+version := "0.1"
       
 lazy val `gpxglitch` = (project in file(".")).enablePlugins(PlayJava)
 
@@ -11,6 +11,4 @@ scalaVersion := "2.11.11"
 libraryDependencies ++= Seq( javaJdbc , cache , javaWs )
 libraryDependencies += "io.jenetics" % "jpx" % "1.1.3"
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
-
-      
+unmanagedResourceDirectories in Test +=  baseDirectory.value / "target/web/public/test"
