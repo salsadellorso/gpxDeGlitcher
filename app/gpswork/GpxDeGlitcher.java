@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
 import storage.Storage;
 
 public class GpxDeGlitcher {
@@ -29,17 +30,20 @@ public class GpxDeGlitcher {
     }
 
     private static double getFlatSpeed(WayPoint p1, WayPoint p2) {
-        double duration = getDuration(p1,p2);
-        if (duration<VICINITY_IN_TIME) return CEILING;
-        return 3.6 * getDistance(p1,p2)/duration;
+        double duration = getDuration(p1, p2);
+        if (duration < VICINITY_IN_TIME) return CEILING;
+        return 3.6 * getDistance(p1, p2) / duration;
     }
 
     /**
      * for a given file specified by @param inputFileName
+     *
      * @return a GPX object cleared from bad points
      * @throws IOException
      */
 
+
+    // TODO: separate collect_all_points and filtering_outliers to different methods
     public static GPX smooth(String inputFileName, double desiredCutoff) throws IOException {
         flat_cutoff = desiredCutoff;
         GPX source = GPX.read(inputFileName);
@@ -47,30 +51,30 @@ public class GpxDeGlitcher {
         List<WayPoint> originalPoints = new ArrayList<>();
 
         //collecting all original points to one list
-        for(Track track:tracks) {
+        for (Track track : tracks) {
             List<TrackSegment> segments = track.getSegments();
-            for(TrackSegment segment: segments) {
+            for (TrackSegment segment : segments) {
                 originalPoints.addAll(segment.getPoints());
             }
         }
 
-	    List<WayPoint> pointsFilteredBySpeed = new ArrayList<>();
+        List<WayPoint> pointsFilteredBySpeed = new ArrayList<>();
         int pointsTotal = originalPoints.size();
         int i = 0;
 
         //filtering out outliers
-        while( i <pointsTotal-2) {
+        while (i < pointsTotal - 2) {
             WayPoint p1 = originalPoints.get(i);
             double speed = CEILING;
             int j = i;
-            while(speed > flat_cutoff) {
+            while (speed > flat_cutoff) {
                 j++;
-                if(j == pointsTotal-1) break;
+                if (j == pointsTotal - 1) break;
                 WayPoint p2 = originalPoints.get(j);
-                speed = getFlatSpeed(p1,p2);
+                speed = getFlatSpeed(p1, p2);
             }
             pointsFilteredBySpeed.add(originalPoints.get(j));
-            i=j;
+            i = j;
         }
 
         TrackSegment resultSegment = TrackSegment.of(pointsFilteredBySpeed);
@@ -79,13 +83,14 @@ public class GpxDeGlitcher {
 
         outliersTotal = pointsTotal - pointsFilteredBySpeed.size();
         return result;
-        }
+    }
 
-    /** @return the number of bad points,
+    /**
+     * @return the number of bad points,
      * could be called only once and after {@link GpxDeGlitcher#smooth(java.lang.String, double)}
      * method
      */
-    public static Integer numberOfPointsDeleted(){
+    public static Integer numberOfPointsDeleted() {
         Integer pointsDeleted = new Integer(outliersTotal);
         outliersTotal = null;
         return pointsDeleted;

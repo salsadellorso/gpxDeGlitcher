@@ -28,15 +28,15 @@ public class ApplicationTest {
             GPX fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16);
 
             //and no weird exceptions must be thrown from above code refering to jpx library!
-            assertTrue(fromGpxDeGlitcher!=null);
+            assertTrue(fromGpxDeGlitcher != null);
 
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("o_o: smth weird happend, revisit testGpxDeGlitcher");
-        } finally{
+        } finally {
             new File(filename).delete();
         }
 
-   }
+    }
 
 
 }
