@@ -28,9 +28,12 @@ public class ResultsController extends Controller {
         GPX gpxResult = Storage.gpxResult;
         InputStream is = null;
         try {
-            GPX.write(gpxResult, TEMPORARY_FILE_NAME);
-            File toReturn = new File(TEMPORARY_FILE_NAME);
-            is = new FileInputStream(toReturn);
+            //GPX.write(gpxResult, TEMPORARY_FILE_NAME);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GPX.write(gpxResult, baos);
+            is = new ByteArrayInputStream (baos.toByteArray());
+            //File toReturn = new File(TEMPORARY_FILE_NAME);
+            //is = new FileInputStream(toReturn);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("o_o: can't write or create InputStream in ResultsController.downloadFileAsStream()");
