@@ -10,7 +10,6 @@ import java.io.*;
 public class ResultsController extends Controller {
 
     private static final String CUSTOM_ERROR_MESSAGE = "o_o: sorry, something has gone wrong";
-    private static final String TEMPORARY_FILE_NAME = "tmp" + System.currentTimeMillis() % 666;
 
     /**
      * Takes ready GPX object from the storage,
@@ -23,17 +22,12 @@ public class ResultsController extends Controller {
 
     public Result downloadFileAsStream() {
 
-        //TODO: try to return just a file without InputStream creation
-
         GPX gpxResult = Storage.gpxResult;
         InputStream is = null;
         try {
-            //GPX.write(gpxResult, TEMPORARY_FILE_NAME);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GPX.write(gpxResult, baos);
-            is = new ByteArrayInputStream (baos.toByteArray());
-            //File toReturn = new File(TEMPORARY_FILE_NAME);
-            //is = new FileInputStream(toReturn);
+            is = new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("o_o: can't write or create InputStream in ResultsController.downloadFileAsStream()");
@@ -41,10 +35,7 @@ public class ResultsController extends Controller {
             Storage.gpxResult = null;
             Storage.numberOfPointsDeleted = null;
         }
-
         // TODO: close InputStream?
-        // TODO: delete temporary and uploaded files?
-
         return is == null || gpxResult == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
     }
 }
