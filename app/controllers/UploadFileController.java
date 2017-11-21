@@ -43,18 +43,21 @@ public class UploadFileController extends Controller {
 
         DynamicForm requestData = formFactory.form().bindFromRequest();
         Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
+        boolean isVertical = requestData.get("doVertical") != null;
 
         if (preFile != null) {
             try{
-               Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff);
+               Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff, isVertical);
                points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
                } catch(IOException e) {
                     e.printStackTrace();
                     System.out.println("o_o: problems with uploaded file");
                }
 
-            String status = Storage.gpxResult == null ? "Fail": "Success";
-            return ok(resultgpx.render(points, status));
+               boolean resultExists = Storage.gpxResult == null;
+               String status = resultExists ? "Fail": "Success";
+               if (resultExists && isVertical) status += "/n vertical filter has been applied";
+               return ok(resultgpx.render(points, status));
 
         } else {
             flash("error!", "Missing file");

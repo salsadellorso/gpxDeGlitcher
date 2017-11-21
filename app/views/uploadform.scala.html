@@ -14,7 +14,8 @@
         </p>
 
         <form name = "uploadForm" method = "POST" enctype = multipart/form-data>
-            <input type = "number" name = "desiredCutoff" placeholder = "14.5" value = "14.5" step="0.5" min="0"><br>
+            <input type = "number" name = "desiredCutoff" placeholder = "14.5" value = "14.5" step="0.5" min="0"/><br>
+            <input type = "checkbox" name = "doVertical" value ="true"/>Filter out vertical oscillations (experimental)<br>
             <input type = "file" name = "fileField" accept = ".gpx"/><br>
             <input type = "submit" name = "submitButton" value = "upload and process"/><br>
         </form>

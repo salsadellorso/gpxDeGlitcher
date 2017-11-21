@@ -25,7 +25,7 @@ public class ApplicationTest {
                                     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162).time(ZonedDateTime.now().plusMinutes(5)))))
                     .build();
             GPX.write(gpx, filename);
-            GPX fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16);
+            GPX fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16, true);
 
             //and no weird exceptions must be thrown from above code refering to jpx library!
             assertTrue(fromGpxDeGlitcher != null);
