@@ -28,7 +28,7 @@ public class ResultsController extends Controller {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GPX.write(gpxResult, baos);
             is = new ByteArrayInputStream(baos.toByteArray());
-        } catch (IOException e) {
+            } catch (IOException e) {
             e.printStackTrace();
             System.out.println("o_o: can't write or create InputStream in ResultsController.downloadFileAsStream()");
         } finally {

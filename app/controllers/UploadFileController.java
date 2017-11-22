@@ -3,6 +3,7 @@ package controllers;
 
 
 import gpswork.GpxDeGlitcher;
+import io.jenetics.jpx.GPX;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import storage.Storage;
@@ -37,6 +38,7 @@ public class UploadFileController extends Controller {
     public Result processFile() {
 
         Integer points = null;
+        String resultsPath = null;
 
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> preFile = body.getFile("fileField");
@@ -49,6 +51,10 @@ public class UploadFileController extends Controller {
             try{
                Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff, isVertical);
                points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
+                String fileName = "public/result.gpx";
+                GPX.write(Storage.gpxResult, fileName);
+                File toReturn = new File(fileName);
+                resultsPath = toReturn.getCanonicalPath();
                } catch(IOException e) {
                     e.printStackTrace();
                     System.out.println("o_o: problems with uploaded file");
@@ -57,7 +63,7 @@ public class UploadFileController extends Controller {
                boolean resultExists = Storage.gpxResult == null;
                String status = resultExists ? "Fail": "Success";
                if (resultExists && isVertical) status += "/n vertical filter has been applied";
-               return ok(resultgpx.render(points, status));
+               return ok(resultgpx.render(points, status, resultsPath));
 
         } else {
             flash("error!", "Missing file");
