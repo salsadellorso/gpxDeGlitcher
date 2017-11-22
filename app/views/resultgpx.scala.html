@@ -58,7 +58,7 @@
 
       var vector = new ol.layer.Vector({
           source: new ol.source.Vector({
-              url: '@resultsPath',
+              url: 'http://localhost:9000/download',
               format: new ol.format.GPX()
           }),
           style: function(feature) {

@@ -13,11 +13,13 @@ public class MappingController extends Controller {
     public Result processResult(){
 
         String resultGPX = null;
+        InputStream is = null;
 
         try {
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GPX.write(Storage.gpxResult, baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
+            is = new ByteArrayInputStream(baos.toByteArray());
 
             ByteArrayOutputStream result = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
@@ -33,7 +35,8 @@ public class MappingController extends Controller {
             e.printStackTrace();
             System.out.println("o_o: cant handle actions in MappingController");
         }
-        return ok(resultGPX);
+       // return ok(resultGPX);
+         return ok(is);
     }
 
 
