@@ -1,10 +1,15 @@
-@(points: Integer, status: String)
+@(points: Integer, status: String, resultsPath: String)
 
 <!DOCTYPE html>
 
 <html>
     <head>
         <title>the result</title>
+
+        <link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">
+        <script src="https://openlayers.org/en/v4.5.0/build/ol.js"></script>
+
+
     </head>
 
     <body>
@@ -16,6 +21,92 @@
         </p>
 
         Now download updated file <a href = "/download" download = yourResult.gpx> here </a>
+
+        <div id="map" class="map"></div>
+        <div id="info">&nbsp;</div>
+        <script>
+      var raster = new ol.layer.Tile({
+          source: new ol.source.OSM()
+      });
+
+      var style = {
+          'Point': new ol.style.Style({
+              image: new ol.style.Circle({
+                  fill: new ol.style.Fill({
+                      color: 'rgba(255,255,0,0.4)'
+                  }),
+                  radius: 5,
+                  stroke: new ol.style.Stroke({
+                      color: '#ff0',
+                      width: 1
+                  })
+              })
+          }),
+          'LineString': new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                  color: '#f00',
+                  width: 3
+              })
+          }),
+          'MultiLineString': new ol.style.Style({
+              stroke: new ol.style.Stroke({
+                  color: '#0f0',
+                  width: 3
+              })
+          })
+      };
+
+      var vector = new ol.layer.Vector({
+          source: new ol.source.Vector({
+              url: '@resultsPath',
+              format: new ol.format.GPX()
+          }),
+          style: function(feature) {
+              return style[feature.getGeometry().getType()];
+          }
+      });
+
+      var map = new ol.Map({
+          layers: [raster, vector],
+          target: document.getElementById('map'),
+          view: new ol.View({
+              center: [1240272.1,  5805933.4],
+              zoom: 12
+          })
+      });
+
+      var displayFeatureInfo = function(pixel) {
+          var features = [];
+          map.forEachFeatureAtPixel(pixel, function(feature) {
+              features.push(feature);
+          });
+          if (features.length > 0) {
+              var info = [];
+              var i, ii;
+              for (i = 0, ii = features.length; i < ii; ++i) {
+                  info.push(features[i].get('desc'));
+              }
+              document.getElementById('info').innerHTML = info.join(', ') || '(unknown)';
+              map.getTarget().style.cursor = 'pointer';
+          } else {
+              document.getElementById('info').innerHTML = '&nbsp;';
+              map.getTarget().style.cursor = '';
+          }
+      };
+
+      map.on('pointermove', function(evt) {
+          if (evt.dragging) {
+              return;
+          }
+          var pixel = map.getEventPixel(evt.originalEvent);
+          displayFeatureInfo(pixel);
+      });
+
+      map.on('click', function(evt) {
+          displayFeatureInfo(evt.pixel);
+      });
+    </script>
+
 
     </body>
 
