@@ -131,11 +131,11 @@ public class GpxDeGlitcher {
         return 3.6 * getDistance(p1, p2) / duration;
     }
 
-    private static double getVerticalSpeed(WayPoint p1, WayPoint p2){
+    private static double getVerticalSpeed(WayPoint p1, WayPoint p2) {
         double duration = getDuration(p1, p2);
         if (duration < VICINITY_IN_TIME) return VERTICAL_CUTOFF;
         if (!p1.getElevation().isPresent() || !p2.getElevation().isPresent()) return 0.0;
-        return 3.6 * Math.abs(p1.getElevation().get().doubleValue() - p2.getElevation().get().doubleValue()) / getDuration(p1,p2);
+        return 3.6 * Math.abs(p1.getElevation().get().doubleValue() - p2.getElevation().get().doubleValue()) / getDuration(p1, p2);
     }
 
     //TODO: .isPresent() and all getVert stuff looks messy

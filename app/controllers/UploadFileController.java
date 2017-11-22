@@ -1,14 +1,15 @@
 package controllers;
 
 
-
 import gpswork.GpxDeGlitcher;
 import io.jenetics.jpx.GPX;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import storage.Storage;
 import play.mvc.*;
+
 import java.io.*;
+
 import views.html.*;
 
 
@@ -30,11 +31,11 @@ public class UploadFileController extends Controller {
         return ok(uploadform.render());
     }
 
-    /** Passes uploaded file to static method {@link GpxDeGlitcher#smooth(java.lang.String, double)},
+    /**
+     * Passes uploaded file to static method {@link GpxDeGlitcher#smooth(java.lang.String, double, boolean)},
      * asks for a number of bad points and
      * then renders the result page
      */
-
     public Result processFile() {
 
         Integer points = null;
@@ -48,22 +49,18 @@ public class UploadFileController extends Controller {
         boolean isVertical = requestData.get("doVertical") != null;
 
         if (preFile != null) {
-            try{
-               Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff, isVertical);
-               points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
-                String fileName = "public/result.gpx";
-                GPX.write(Storage.gpxResult, fileName);
-                File toReturn = new File(fileName);
-                resultsPath = toReturn.getCanonicalPath();
-               } catch(IOException e) {
-                    e.printStackTrace();
-                    System.out.println("o_o: problems with uploaded file");
-               }
+            try {
+                Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff, isVertical);
+                points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("o_o: problems with uploaded file");
+            }
 
-               boolean resultExists = Storage.gpxResult == null;
-               String status = resultExists ? "Fail": "Success";
-               if (resultExists && isVertical) status += "/n vertical filter has been applied";
-               return ok(resultgpx.render(points, status, resultsPath));
+            boolean resultExists = Storage.gpxResult == null;
+            String status = resultExists ? "Fail" : "Success";
+            if (resultExists && isVertical) status += "/n vertical filter has been applied";
+            return ok(resultgpx.render(points, status));
 
         } else {
             flash("error!", "Missing file");

@@ -1,4 +1,4 @@
-@(points: Integer, status: String, resultsPath: String)
+@(points: Integer, status: String)
 
 <!DOCTYPE html>
 
@@ -58,7 +58,7 @@
 
       var vector = new ol.layer.Vector({
           source: new ol.source.Vector({
-              url: 'http://localhost:9000/download',
+              url: 'http://localhost:9000/result.gpx',
               format: new ol.format.GPX()
           }),
           style: function(feature) {

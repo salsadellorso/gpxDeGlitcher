@@ -21,21 +21,21 @@ public class ResultsController extends Controller {
      */
 
     public Result downloadFileAsStream() {
-
-        GPX gpxResult = Storage.gpxResult;
-        InputStream is = null;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            GPX.write(gpxResult, baos);
-            is = new ByteArrayInputStream(baos.toByteArray());
-            } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("o_o: can't write or create InputStream in ResultsController.downloadFileAsStream()");
-        } finally {
-            Storage.gpxResult = null;
-            Storage.numberOfPointsDeleted = null;
-        }
+        InputStream is = Storage.getResultAsInputStream();
+        Storage.gpxResult = null;
+        Storage.numberOfPointsDeleted = null;
         // TODO: close InputStream?
-        return is == null || gpxResult == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
+        return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
     }
+
+    /** helper method the request of gpxresult from OpenLayers script
+     * @return gpx result as inputStream when OL script asks for it
+     */
+
+    public Result prepareResultToDrawOnMap() {
+        InputStream is = Storage.getResultAsInputStream();
+        // TODO: close InputStream?
+        return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
+    }
+
 }
