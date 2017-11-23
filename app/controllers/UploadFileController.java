@@ -6,17 +6,10 @@ import play.data.DynamicForm;
 import play.data.FormFactory;
 import storage.Storage;
 import play.mvc.*;
-
 import java.io.*;
-
 import views.html.*;
-
-
 import javax.inject.Inject;
-
-import static gpswork.GpxDeGlitcher.numberOfPointsDeleted;
-import static gpswork.GpxDeGlitcher.smooth;
-import static gpswork.GpxDeGlitcher.getGpxObject;
+import static gpswork.GpxDeGlitcher.*;
 
 public class UploadFileController extends Controller {
 
@@ -38,8 +31,12 @@ public class UploadFileController extends Controller {
      */
     public Result processFile() {
 
-        Integer points = null;
+        Integer pointsDeleted = null;
+        Integer pointsTotal = null;
         String resultsPath = null;
+        Double lon = null;
+        Double lat = null;
+
 
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> preFile = body.getFile("fileField");
@@ -53,16 +50,19 @@ public class UploadFileController extends Controller {
             try {
                 Storage.gpxSource = getGpxObject(filepath);
                 Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
-                points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
+                pointsDeleted = numberOfPointsDeleted();
+                pointsTotal = numberOfPointsTotal();
+                lon = getLon();
+                lat = getLat();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("o_o: problems with uploaded file");
             }
 
             boolean resultExists = Storage.gpxResult == null;
-            String status = resultExists ? "Fail" : "Success";
+            String status = resultExists ? "FAIL" : "SUCCESS";
             if (resultExists && isVertical) status += "/n vertical filter has been applied";
-            return ok(resultgpx.render(points, status));
+            return ok(resultgpx.render(pointsTotal, pointsDeleted, pointsTotal-pointsDeleted, status, lon, lat));
 
         } else {
             flash("error!", "Missing file");
