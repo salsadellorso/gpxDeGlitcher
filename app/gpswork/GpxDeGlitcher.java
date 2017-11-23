@@ -117,6 +117,16 @@ public class GpxDeGlitcher {
         return pointsDeleted;
     }
 
+    public static GPX getGpxObject(String filepath) {
+        GPX gpxObject = null;
+        try {
+            gpxObject = GPX.read(filepath);
+        } catch (IOException e) {
+            System.out.println("o_o: can't read source file");
+        }
+        return gpxObject;
+    }
+
     private static double getDistance(WayPoint p1, WayPoint p2) {
         return p1.distance(p2).doubleValue();
     }

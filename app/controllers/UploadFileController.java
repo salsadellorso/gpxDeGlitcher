@@ -2,7 +2,6 @@ package controllers;
 
 
 import gpswork.GpxDeGlitcher;
-import io.jenetics.jpx.GPX;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import storage.Storage;
@@ -17,6 +16,7 @@ import javax.inject.Inject;
 
 import static gpswork.GpxDeGlitcher.numberOfPointsDeleted;
 import static gpswork.GpxDeGlitcher.smooth;
+import static gpswork.GpxDeGlitcher.getGpxObject;
 
 public class UploadFileController extends Controller {
 
@@ -47,10 +47,12 @@ public class UploadFileController extends Controller {
         DynamicForm requestData = formFactory.form().bindFromRequest();
         Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
         boolean isVertical = requestData.get("doVertical") != null;
+        String filepath = preFile.getFile().getAbsolutePath();
 
         if (preFile != null) {
             try {
-                Storage.gpxResult = smooth(preFile.getFile().getAbsolutePath(), desiredCutoff, isVertical);
+                Storage.gpxSource = getGpxObject(filepath);
+                Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
                 points = Storage.numberOfPointsDeleted = numberOfPointsDeleted();
             } catch (IOException e) {
                 e.printStackTrace();

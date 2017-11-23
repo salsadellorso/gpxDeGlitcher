@@ -28,13 +28,18 @@ public class ResultsController extends Controller {
         return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
     }
 
-    /** helper method the request of gpxresult from OpenLayers script
+    /** method the request of gpxresult from OpenLayers script
      * @return gpx result as inputStream when OL script asks for it
      */
 
     public Result prepareResultToDrawOnMap() {
         InputStream is = Storage.getResultAsInputStream();
         // TODO: close InputStream?
+        return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
+    }
+
+    public Result prepareSourceToDrawOnMap() {
+        InputStream is = Storage.getSourceAsInputStream();
         return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
     }
 
