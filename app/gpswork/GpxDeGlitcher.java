@@ -10,13 +10,19 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GpxDeGlitcher {
 
     private static final double CEILING = Double.MAX_VALUE;
     private static final double VICINITY_IN_TIME = 1.4;
     private static final double VERTICAL_CUTOFF = 2.4;
+
     private static Integer outliersTotal = null;
+    private static Integer pointsTotal = null;
+    private static Double lon = null;
+    private static Double lat = null;
+
 
     /**
      * for a given file specified by @param inputFileName
@@ -36,26 +42,32 @@ public class GpxDeGlitcher {
         filterVertically(originalPoints, pointsFilteredVert);
 
         GPX result = getGpx(pointsFilteredVert);
-        outliersTotal += pointsFilteredVert.size();
+        outliersTotal = pointsTotal - pointsFilteredVert.size();
         return result;
     }
 
     private static GPX smooth(String inputFileName, double desiredCutoff) throws IOException {
         List<WayPoint> originalPoints = new ArrayList<>();
         collectAllPoints(GPX.read(inputFileName), originalPoints);
+        pointsTotal = originalPoints.size();
 
         List<WayPoint> pointsFilteredBySpeed = new ArrayList<>();
         filterHorizontally(originalPoints, pointsFilteredBySpeed, desiredCutoff);
 
         GPX result = getGpx(pointsFilteredBySpeed);
-        outliersTotal = pointsFilteredBySpeed.size();
+        outliersTotal = pointsTotal - pointsFilteredBySpeed.size();
         return result;
     }
 
+    //since this is the only time we access points directly,
+    //lat and lon get their values inside this method
 
     private static void filterHorizontally(List<WayPoint> source, List<WayPoint> filtered, double desiredCutoff) {
         int ptsTotal = source.size();
         int i = 0;
+        WayPoint center = source.get(ThreadLocalRandom.current().nextInt(0, pointsTotal + 1));
+        lon = center.getLongitude().doubleValue();
+        lat = center.getLatitude().doubleValue();
         while (i < ptsTotal - 2) {
             WayPoint p1 = source.get(i);
             double speed = CEILING;
@@ -117,6 +129,34 @@ public class GpxDeGlitcher {
         return pointsDeleted;
     }
 
+    /**
+     * @return the Total numbe of points,
+     * could be called only once and after {@link GpxDeGlitcher#smooth(java.lang.String, double)}
+     * method
+     */
+    public static int numberOfPointsTotal() {
+        int pointsInitially = new Integer(pointsTotal);
+        pointsTotal = null;
+        return pointsInitially;
+
+    }
+
+    /**
+     * @return coords of current track to show in view
+     */
+
+    public static double getLon() {
+        double longti = new Double(lon);
+        lon = null;
+        return longti;
+    }
+
+    public static double getLat() {
+        double lati = new Double(lat);
+        lat = null;
+        return lati;
+    }
+
     public static GPX getGpxObject(String filepath) {
         GPX gpxObject = null;
         try {
@@ -126,6 +166,7 @@ public class GpxDeGlitcher {
         }
         return gpxObject;
     }
+
 
     private static double getDistance(WayPoint p1, WayPoint p2) {
         return p1.distance(p2).doubleValue();

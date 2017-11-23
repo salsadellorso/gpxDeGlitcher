@@ -13,8 +13,6 @@ public class Storage {
 
     public static GPX gpxSource;
     public static GPX gpxResult;
-    public static Integer numberOfPointsDeleted;
-
 
     /** When method is called from ResultsController.downloadFileAsStream all static fields reset to null
      * @return InputStream representing result file
