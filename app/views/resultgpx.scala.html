@@ -50,7 +50,7 @@
           }),
           'MultiLineString': new ol.style.Style({
               stroke: new ol.style.Stroke({
-                  color: '#0f0',
+                  color: '#ff004c',
                   width: 3
               })
           })
@@ -58,7 +58,7 @@
 
       var vector = new ol.layer.Vector({
           source: new ol.source.Vector({
-              url: 'http://localhost:9000/result.gpx',
+              url: '/result.gpx',
               format: new ol.format.GPX()
           }),
           style: function(feature) {
@@ -70,7 +70,7 @@
           layers: [raster, vector],
           target: document.getElementById('map'),
           view: new ol.View({
-              center: [1240272.1,  5805933.4],
+              center: ol.proj.transform([11.116667, 46.066667], 'EPSG:4326', 'EPSG:3857'),
               zoom: 12
           })
       });
