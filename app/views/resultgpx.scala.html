@@ -4,9 +4,20 @@
 
 <html>
     <head>
-        <title>the result</title>
+        <title>Results</title>
 
         <link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">
+        <style>
+                .map {
+                    height: 400px;
+                    width: 500px;
+                    padding: 3px;
+                }
+                .batya{
+                    display: inline-block;
+                }
+        </style>
+
         <script src="https://openlayers.org/en/v4.5.0/build/ol.js"></script>
 
 
@@ -17,11 +28,14 @@
         @status
 
         <p>
-            @points points have been deleted
+            @points points have been deleted.
         </p>
 
-        Now download updated file <a href = "/download" download = yourResult.gpx> here </a>
+        <div>Now download updated file <a href = "/download" download = yourResult.gpx> here </a></div>
 
+
+        <div class = "batya">
+            <h3>Now</h3>
         <div id="map" class="map"></div>
         <div id="info">&nbsp;</div>
         <script>
@@ -37,20 +51,20 @@
                   }),
                   radius: 5,
                   stroke: new ol.style.Stroke({
-                      color: '#ff0',
+                      color: '#ff0317',
                       width: 1
                   })
               })
           }),
           'LineString': new ol.style.Style({
               stroke: new ol.style.Stroke({
-                  color: '#f00',
+                  color: '#ff0e15',
                   width: 3
               })
           }),
           'MultiLineString': new ol.style.Style({
               stroke: new ol.style.Stroke({
-                  color: '#ff004c',
+                  color: '#ff000a',
                   width: 3
               })
           })
@@ -71,7 +85,7 @@
           target: document.getElementById('map'),
           view: new ol.View({
               center: ol.proj.transform([11.116667, 46.066667], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 12
+              zoom: 10
           })
       });
 
@@ -106,6 +120,96 @@
           displayFeatureInfo(evt.pixel);
       });
     </script>
+        </div>
+
+        <div class = "batya">
+            <h3>Before</h3>
+            <div id="map2" class="map"></div>
+            <div id="info2">&nbsp;</div>
+            <script>
+                    var raster = new ol.layer.Tile({
+                        source: new ol.source.OSM()
+                    });
+
+                    var style = {
+                        'Point': new ol.style.Style({
+                            image: new ol.style.Circle({
+                                fill: new ol.style.Fill({
+                                    color: 'rgba(255,255,0,0.4)'
+                                }),
+                                radius: 5,
+                                stroke: new ol.style.Stroke({
+                                    color: '#261aff',
+                                    width: 1
+                                })
+                            })
+                        }),
+                        'LineString': new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: '#2607ff',
+                                width: 3
+                            })
+                        }),
+                        'MultiLineString': new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: '#0303ff',
+                                width: 3
+                            })
+                        })
+                    };
+
+                    var vector = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            url: '/source.gpx',
+                            format: new ol.format.GPX()
+                        }),
+                        style: function(feature) {
+                            return style[feature.getGeometry().getType()];
+                        }
+                    });
+
+                    var map = new ol.Map({
+                        layers: [raster, vector],
+                        target: document.getElementById('map2'),
+                        view: new ol.View({
+                            center: ol.proj.transform([11.116667, 46.066667], 'EPSG:4326', 'EPSG:3857'),
+                            zoom: 10
+                        })
+                    });
+
+                    var displayFeatureInfo = function(pixel) {
+                        var features = [];
+                        map.forEachFeatureAtPixel(pixel, function(feature) {
+                            features.push(feature);
+                        });
+                        if (features.length > 0) {
+                            var info = [];
+                            var i, ii;
+                            for (i = 0, ii = features.length; i < ii; ++i) {
+                                info.push(features[i].get('desc'));
+                            }
+                            document.getElementById('info2').innerHTML = info.join(', ') || '(unknown)';
+                            map.getTarget().style.cursor = 'pointer';
+                        } else {
+                            document.getElementById('info2').innerHTML = '&nbsp;';
+                            map.getTarget().style.cursor = '';
+                        }
+                    };
+
+                    map.on('pointermove', function(evt) {
+                        if (evt.dragging) {
+                            return;
+                        }
+                        var pixel = map.getEventPixel(evt.originalEvent);
+                        displayFeatureInfo(pixel);
+                    });
+
+                    map.on('click', function(evt) {
+                        displayFeatureInfo(evt.pixel);
+                    });
+            </script>
+        </div>
+
 
 
     </body>
