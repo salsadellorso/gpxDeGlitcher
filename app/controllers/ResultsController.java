@@ -23,7 +23,6 @@ public class ResultsController extends Controller {
     public Result downloadFileAsStream() {
         InputStream is = Storage.getResultAsInputStream();
         Storage.gpxResult = null;
-        Storage.numberOfPointsDeleted = null;
         // TODO: close InputStream?
         return is == null ? badRequest(CUSTOM_ERROR_MESSAGE) : ok(is);
     }
