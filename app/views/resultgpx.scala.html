@@ -1,4 +1,5 @@
-@(pointsTotal: Integer, pointsDeleted: Integer, status: String, lon: Double, lat: Double)
+@(status: String, m: Map[String, Double])
+
 <!DOCTYPE html>
 <html>
 
@@ -6,6 +7,7 @@
         <title>Results</title>
 
         <link rel="stylesheet" type="text/css" href="/assets/stylesheets/results.css">
+        <link rel="stylesheet" type="text/css" href="/assets/stylesheets/general.css">
         <script src="https://openlayers.org/en/v4.5.0/build/ol.js"></script>
         <script src="/assets/javascripts/jquery-1.9.0.min.js"></script>
 
@@ -13,30 +15,31 @@
 
     <body>
         <h4>@status</h4>
-        <p> Number of points initially: @pointsTotal<br>
-            @pointsDeleted points have been deleted<br>
+        <p> Number of points initially: @(f"${m.get("pointsTotal")}%.0f")<br>
+        @(f"${m.get("pointsDeleted")}%.0f") points have been deleted
+            Now download updated file <a href = "/download" download = yourResult.gpx> here </a>
         </p>
-
-        <div> Now download updated file <a href = "/download" download = yourResult.gpx> here </a></div>
 
         <!--map rendering is based on the following example
         https://openlayers.org/en/latest/examples/gpx.html -->
 
         <div id="original" class="map">
             <h3>Original</h3>
+            length = @(f"${m.get("lenSource")}%.2f") km
         </div>
 
         <div id="fixed" class="map">
             <h3>Fixed</h3>
+            length = @(f"${m.get("lenResult")}%.2f") km
         </div>
 
         <br>
         <a href = "/">Try again</a>
 
-        <script type="text/javascript" data-lon_source = "@lon" data-lat_source = "@lat" src = "/assets/javascripts/map-source.js">
+        <script type="text/javascript" data-lon_source = "@m.get("lon")" data-lat_source = "@m.get("lat")" src = "/assets/javascripts/map-source.js">
         </script>
 
-        <script type="text/javascript" data-lon_result = "@lon" data-lat_result = "@lat" src = "/assets/javascripts/map-result.js">
+        <script type="text/javascript" data-lon_result = "@m.get("lon")" data-lat_result = "@m.get("lat")" src = "/assets/javascripts/map-result.js">
         </script>
 
     </body>

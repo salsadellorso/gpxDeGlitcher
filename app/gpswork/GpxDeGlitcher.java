@@ -68,7 +68,7 @@ public class GpxDeGlitcher {
         double cutoff = isVertical ? VERTICAL_CUTOFF : desiredCutoff;
         int ptsTotal = source.size();
         int i = 0;
-        WayPoint center = source.get(ThreadLocalRandom.current().nextInt(0, pointsTotal + 1));
+        WayPoint center = source.get(ThreadLocalRandom.current().nextInt(0, ptsTotal + 1));
         lon = center.getLongitude().doubleValue();
         lat = center.getLatitude().doubleValue();
 
