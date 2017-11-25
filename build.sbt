@@ -10,5 +10,7 @@ scalaVersion := "2.11.11"
 
 libraryDependencies ++= Seq( javaJdbc , cache , javaWs )
 libraryDependencies += "io.jenetics" % "jpx" % "1.1.3"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-api" % "2.10.0"
+libraryDependencies += "org.apache.logging.log4j" % "log4j-core" % "2.10.0"
 
 unmanagedResourceDirectories in Test +=  baseDirectory.value / "target/web/public/test"

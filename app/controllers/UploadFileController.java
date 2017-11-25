@@ -2,6 +2,9 @@ package controllers;
 
 
 import gpswork.GpxDeGlitcher;
+import gpswork.exceptions.WeirdGpxException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import storage.Storage;
@@ -17,8 +20,8 @@ public class UploadFileController extends Controller {
 
     @Inject
     private FormFactory formFactory;
-    private static final String CUSTOM_ERROR_MESSAGE = "o_o: file is missing";
-
+    private static final String CUSTOM_ERROR_MESSAGE = "o_o: something went wrong";
+    private static final Logger LOGGER = LogManager.getLogger("GLOBAL");
 
     public Result renderUploadFormPage() {
         return ok(uploadform.render());
@@ -31,42 +34,35 @@ public class UploadFileController extends Controller {
      */
     public Result processFile() {
 
-        Integer pointsDeleted = null;
-        Integer pointsTotal = null;
-        String resultsPath = null;
-        Double lon = null;
-        Double lat = null;
-
-
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> preFile = body.getFile("fileField");
 
         DynamicForm requestData = formFactory.form().bindFromRequest();
         Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
         boolean isVertical = requestData.get("doVertical") != null;
-        String filepath = preFile.getFile().getAbsolutePath();
 
-        if (preFile != null) {
-            try {
+        try {
+                String filepath = preFile.getFile().getAbsolutePath();
                 Storage.gpxSource = getGpxObject(filepath);
                 Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
-                pointsDeleted = numberOfPointsDeleted();
-                pointsTotal = numberOfPointsTotal();
-                lon = getLon();
-                lat = getLat();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("o_o: problems with uploaded file");
+                String status = Storage.gpxResult != null ? "SUCCESS!" : "FAIL!";
+                if (isVertical) status += " Vertical filter has been applied.";
+                return ok(
+                        resultgpx.render(numberOfPointsTotal(),
+                                         numberOfPointsDeleted(),
+                                         status,
+                                         getLon(),
+                                         getLat()));
+            } catch (IOException ioe) {
+                LOGGER.error("o_o: problems with uploaded file", ioe);
+                LOGGER.isErrorEnabled();
+            } catch (IllegalStateException ise){                    //rare case when file looks like xml
+                LOGGER.error("o_o: false gpx/xml", ise);   //but not a valid xml (eg root is not closed, etc)
+            } catch (WeirdGpxException wge){
+                LOGGER.error("o_o: this is a weird gpx", wge);
             }
 
-            boolean resultExists = Storage.gpxResult == null;
-            String status = resultExists ? "FAIL" : "SUCCESS";
-            if (resultExists && isVertical) status += "/n vertical filter has been applied";
-            return ok(resultgpx.render(pointsTotal, pointsDeleted, pointsTotal-pointsDeleted, status, lon, lat));
-
-        } else {
-            flash("error!", "Missing file");
+            flash("error", "corrupted or missing file");
             return badRequest(CUSTOM_ERROR_MESSAGE);
-        }
     }
 }

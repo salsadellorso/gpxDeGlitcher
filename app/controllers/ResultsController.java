@@ -9,7 +9,7 @@ import java.io.*;
 
 public class ResultsController extends Controller {
 
-    private static final String CUSTOM_ERROR_MESSAGE = "o_o: sorry, something has gone wrong";
+    private static final String CUSTOM_ERROR_MESSAGE = "sorry, something went wrong";
 
     /**
      * Takes ready GPX object from the storage,

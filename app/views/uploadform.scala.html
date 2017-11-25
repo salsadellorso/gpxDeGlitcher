@@ -7,13 +7,13 @@
         </head>
 
     <body>
-        <h1>Fix your inaccurate gpx data from glitches</h1>
+        <h1>Fix your inaccurate gpx data</h1>
 
         <p>
         Upload your file and choose cutoff speed. Too fast segments will be deleted.
         </p>
 
-        <form name = "uploadForm" method = "POST" enctype = multipart/form-data>
+        <form name = "uploadForm" method = "POST" enctype = "multipart/form-data">
             <input type = "number" name = "desiredCutoff" placeholder = "14.5" value = "14.5" step="0.5" min="0"/><br>
             <input type = "checkbox" name = "doVertical" value ="true"/>Filter out vertical oscillations (experimental)<br>
             <input type = "file" name = "fileField" accept = ".gpx"/><br>

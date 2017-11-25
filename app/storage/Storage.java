@@ -1,6 +1,8 @@
 package storage;
 
 import io.jenetics.jpx.GPX;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +15,7 @@ public class Storage {
 
     public static GPX gpxSource;
     public static GPX gpxResult;
+    private static final Logger LOGGER = LogManager.getLogger("GLOBAL");
 
     /** When method is called from ResultsController.downloadFileAsStream all static fields reset to null
      * @return InputStream representing result file
@@ -24,8 +27,7 @@ public class Storage {
             GPX.write(gpxResult, baos);
             is = new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException e){
-            e.printStackTrace();
-            System.out.println("o_o: result GPX object is empty");
+            LOGGER.error("o_o: result GPX object is empty", e);
         }
         return is;
     }
@@ -38,8 +40,7 @@ public class Storage {
             GPX.write(gpxSource, baos);
             is = new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException e){
-            e.printStackTrace();
-            System.out.println("o_o: source GPX object is empty");
+            LOGGER.error("o_o: source GPX object is empty", e);
         }
         return is;
     }

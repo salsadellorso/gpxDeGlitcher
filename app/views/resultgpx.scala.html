@@ -1,4 +1,4 @@
-@(pointsTotal: Integer, pointsDeleted: Integer, pointsLeft: Integer, status: String, lon: Double, lat: Double)
+@(pointsTotal: Integer, pointsDeleted: Integer, status: String, lon: Double, lat: Double)
 <!DOCTYPE html>
 <html>
 
@@ -19,10 +19,9 @@
     </head>
 
     <body>
-        <h4>@status!</h4>
+        <h4>@status</h4>
         <p> Number of points initially: @pointsTotal<br>
             @pointsDeleted points have been deleted<br>
-            @pointsLeft points left
         </p>
 
         <div> Now download updated file <a href = "/download" download = yourResult.gpx> here </a></div>
