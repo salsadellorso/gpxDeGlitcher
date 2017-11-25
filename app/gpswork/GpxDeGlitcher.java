@@ -25,7 +25,6 @@ public class GpxDeGlitcher {
     private static Double lon = null;
     private static Double lat = null;
 
-
     /**
      * for a given file specified by
      * @param filePath
@@ -56,7 +55,6 @@ public class GpxDeGlitcher {
         if (originalPoints.size()==0) throw new WeirdGpxException("o_o: attempt to collect points failed");
         pointsTotal = originalPoints.size();
 
-
         List<WayPoint> pointsFilteredBySpeed = new ArrayList<>();
         filter(originalPoints, pointsFilteredBySpeed, desiredCutoff, !VERTICAL);
         outliersTotal = pointsTotal - pointsFilteredBySpeed.size();
@@ -73,6 +71,7 @@ public class GpxDeGlitcher {
         WayPoint center = source.get(ThreadLocalRandom.current().nextInt(0, pointsTotal + 1));
         lon = center.getLongitude().doubleValue();
         lat = center.getLatitude().doubleValue();
+
         while (i < ptsTotal - 2) {
             WayPoint p1 = source.get(i);
             double speed = CEILING;
@@ -124,7 +123,6 @@ public class GpxDeGlitcher {
         int pointsInitially = new Integer(pointsTotal);
         pointsTotal = null;
         return pointsInitially;
-
     }
 
     /**

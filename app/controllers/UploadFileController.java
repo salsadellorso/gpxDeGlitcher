@@ -55,14 +55,12 @@ public class UploadFileController extends Controller {
                                          getLat()));
             } catch (IOException ioe) {
                 LOGGER.error("o_o: problems with uploaded file", ioe);
-                LOGGER.isErrorEnabled();
-            } catch (IllegalStateException ise){                    //rare case when file looks like xml
-                LOGGER.error("o_o: false gpx/xml", ise);   //but not a valid xml (eg root is not closed, etc)
             } catch (WeirdGpxException wge){
                 LOGGER.error("o_o: this is a weird gpx", wge);
+            } catch (IllegalStateException ise) {                    //rare case when file looks like xml
+                LOGGER.error("o_o: false gpx/xml", ise);   //but not a valid xml (eg root is not closed, etc)
             }
-
-            flash("error", "corrupted or missing file");
-            return badRequest(CUSTOM_ERROR_MESSAGE);
+         //   flash("error", "corrupted or missing file");
+            return badRequest(errorpage.render(CUSTOM_ERROR_MESSAGE));
     }
 }
