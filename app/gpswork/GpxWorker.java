@@ -5,6 +5,7 @@ import io.jenetics.jpx.geom.Geoid;
 import java.util.stream.Stream;
 
 public class GpxWorker {
+    private static final double ERROR_CODE = Double.NEGATIVE_INFINITY;
 
     /**
      * @param gpx
@@ -12,6 +13,7 @@ public class GpxWorker {
      */
 
     public static double getLength(GPX gpx) {
+        if (gpx==null) return ERROR_CODE;
         return gpx.tracks()
                 .flatMap(Track::segments)
                 .findFirst()

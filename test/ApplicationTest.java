@@ -3,7 +3,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 
+import controllers.UploadFileController;
 import gpswork.GpxDeGlitcher;
+import gpswork.exceptions.WeirdGpxException;
 import io.jenetics.jpx.GPX;
 import org.junit.*;
 
@@ -15,6 +17,7 @@ public class ApplicationTest {
     public void testGpxDeGlitcher() {
 
         String filename = "yex.gpx";
+        GPX fromGpxDeGlitcher = null;
 
         try {
             GPX gpx = GPX.builder()
@@ -25,7 +28,11 @@ public class ApplicationTest {
                                     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162).time(ZonedDateTime.now().plusMinutes(5)))))
                     .build();
             GPX.write(gpx, filename);
-            GPX fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16, true);
+            try {
+                fromGpxDeGlitcher = GpxDeGlitcher.smooth(filename, 16, true);
+            } catch (WeirdGpxException e) {
+                e.printStackTrace();
+            }
 
             //and no weird exceptions must be thrown from above code refering to jpx library!
             assertTrue(fromGpxDeGlitcher != null);
@@ -37,6 +44,5 @@ public class ApplicationTest {
         }
 
     }
-
 
 }

@@ -1,4 +1,4 @@
-@(status: String, m: Map[String, Double])
+@(status: String, s: storage.Statistics)
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +15,9 @@
 
     <body>
         <h4>@status</h4>
-        <p> Number of points initially: @(f"${m.get("pointsTotal")}%.0f")<br>
-        @(f"${m.get("pointsDeleted")}%.0f") points have been deleted
-            Now download updated file <a href = "/download" download = yourResult.gpx> here </a>
+        <p> Number of points initially: @(f"${s.pointsTotal}%.0f")<br>
+        @(f"${s.pointsDeleted}%.0f") points have been deleted.
+            Download updated file <a href = "/download" download = yourResult.gpx> here </a>
         </p>
 
         <!--map rendering is based on the following example
@@ -25,21 +25,21 @@
 
         <div id="original" class="map">
             <h3>Original</h3>
-            length = @(f"${m.get("lenSource")}%.2f") km
+            length = @(f"${s.lenSource}%.2f") km
         </div>
 
         <div id="fixed" class="map">
             <h3>Fixed</h3>
-            length = @(f"${m.get("lenResult")}%.2f") km
+            length = @(f"${s.lenResult}%.2f") km
         </div>
 
         <br>
         <a href = "/">Try again</a>
 
-        <script type="text/javascript" data-lon_source = "@m.get("lon")" data-lat_source = "@m.get("lat")" src = "/assets/javascripts/map-source.js">
+        <script type="text/javascript" data-lon_source = "@s.lon" data-lat_source = "@s.lat" src = "/assets/javascripts/map-source.js">
         </script>
 
-        <script type="text/javascript" data-lon_result = "@m.get("lon")" data-lat_result = "@m.get("lat")" src = "/assets/javascripts/map-result.js">
+        <script type="text/javascript" data-lon_result = "@s.lon" data-lat_result = "@s.lat" src = "/assets/javascripts/map-result.js">
         </script>
 
     </body>

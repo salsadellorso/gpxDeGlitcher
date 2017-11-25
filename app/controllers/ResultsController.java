@@ -1,6 +1,5 @@
 package controllers;
 
-import io.jenetics.jpx.GPX;
 import play.mvc.Controller;
 import play.mvc.Result;
 import storage.Storage;
