@@ -9,6 +9,8 @@ import static gpswork.GpxWorker.getLength;
 
 public class Statistics {
 
+    //getters and setters are tiresome..
+
     public int pointsTotal;
     public int pointsDeleted;
     public double lon;
