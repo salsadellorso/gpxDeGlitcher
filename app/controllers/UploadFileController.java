@@ -38,16 +38,14 @@ public class UploadFileController extends Controller {
 
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> preFile = body.getFile("fileField");
+        String filepath = preFile.getFile().getAbsolutePath();
 
         DynamicForm requestData = formFactory.form().bindFromRequest();
         Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
         boolean isVertical = requestData.get("doVertical") != null;
 
         try {
-            String filepath = preFile.getFile().getAbsolutePath();
-            Storage.gpxSource = getGpxObject(filepath);
-            Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
-            String status = Storage.gpxResult != null ? "SUCCESS!" : "FAIL!";
+            String status = processAndStore(filepath, desiredCutoff, isVertical) ? "SUCCESS!" : "FAIL!";
             if (isVertical) status += " Vertical filter has been applied.";
             return ok(resultgpx.render(status, new Statistics()));
 
@@ -56,10 +54,16 @@ public class UploadFileController extends Controller {
         } catch (WeirdGpxException wge) {
             LOGGER.error("o_o: this is a weird gpx", wge);
         } catch (IllegalStateException ise) {                    //rare case when file looks like xml
-            LOGGER.error("o_o: false gpx/xml", ise);             //but not a valid xml (eg root is not closed, etc)
+            LOGGER.error("o_o: false gpx/xml", ise);    //but not a valid xml (eg root is not closed, etc)
         }
         //   flash("error", "corrupted or missing file");        //needed for redirect
         return badRequest(errorpage.render(CUSTOM_ERROR_MESSAGE));
+    }
+
+    private boolean processAndStore(String filepath, Double desiredCutoff, boolean isVertical) throws IOException, WeirdGpxException {
+        Storage.gpxSource = getGpxObject(filepath);
+        Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
+        return Storage.gpxResult != null;
     }
 
 }
