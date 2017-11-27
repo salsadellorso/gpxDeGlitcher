@@ -60,6 +60,7 @@ public class UploadFileController extends Controller {
         return badRequest(errorpage.render(CUSTOM_ERROR_MESSAGE));
     }
 
+
     private boolean processAndStore(String filepath, Double desiredCutoff, boolean isVertical) throws IOException, WeirdGpxException {
         Storage.gpxSource = getGpxObject(filepath);
         Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
