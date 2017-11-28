@@ -41,20 +41,21 @@ public class UploadFileController extends Controller {
         String filepath = preFile.getFile().getAbsolutePath();
 
         DynamicForm requestData = formFactory.form().bindFromRequest();
-        Double desiredCutoff = Double.parseDouble(requestData.get("desiredCutoff"));
+        String cutoffString = requestData.get("desiredCutoff");
+        Double desiredCutoff = cutoffString.isEmpty()? 0: Double.parseDouble(cutoffString);
         boolean isVertical = requestData.get("doVertical") != null;
 
         try {
             String status = processAndStore(filepath, desiredCutoff, isVertical) ? "SUCCESS!" : "FAIL!";
             if (isVertical) status += " Vertical filter has been applied.";
-            return ok(resultgpx.render(status, new Statistics()));
+            return ok(resultgpx.render(status, desiredCutoff, new Statistics()));
 
         } catch (IOException ioe) {
             LOGGER.error("o_o: problems with uploaded file", ioe);
         } catch (WeirdGpxException wge) {
             LOGGER.error("o_o: this is a weird gpx", wge);
         } catch (IllegalStateException ise) {                    //rare case when file looks like xml
-            LOGGER.error("o_o: false gpx/xml", ise);    //but not a valid xml (eg root is not closed, etc)
+            LOGGER.error("o_o: false gpx/xml", ise);    //but not valid xml (eg root is not closed, etc)
         }
         //   flash("error", "corrupted or missing file");        //needed for redirect
         return badRequest(errorpage.render(CUSTOM_ERROR_MESSAGE));

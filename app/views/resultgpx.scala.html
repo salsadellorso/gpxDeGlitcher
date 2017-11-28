@@ -1,4 +1,4 @@
-@(status: String, s: storage.Statistics)
+@(status: String, cutoff: Double, s: storage.Statistics)
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +15,12 @@
 
     <body>
         <h4>@status</h4>
-        <p> Number of points initially: @(f"${s.pointsTotal}%.0f")<br>
-        @(f"${s.pointsDeleted}%.0f") points have been deleted.
-            Download updated file <a href = "/download" download = yourResult.gpx> here </a>
+
+        <p>
+        @(f"${cutoff}%.2f") km/h is your cutoff choice. <br>
+        Number of points initially: @s.pointsTotal <br>
+        Points deleted: @s.pointsDeleted <br>
+        Download updated file <a href = "/download" download = yourResult.gpx> here </a>
         </p>
 
         <!--map rendering is based on the following example
