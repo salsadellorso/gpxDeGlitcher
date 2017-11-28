@@ -12,6 +12,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GpxDeGlitcher {
 
@@ -93,14 +95,12 @@ public class GpxDeGlitcher {
         return GPX.builder().addTrack(resultTrack).build();
     }
 
-    private static void collectAllPoints(GPX source, List<WayPoint> points) {
-        List<Track> tracks = source.getTracks();
-        for (Track track : tracks) {
-            List<TrackSegment> segments = track.getSegments();
-            for (TrackSegment segment : segments) {
-                points.addAll(segment.getPoints());
-            }
-        }
+    private static void collectAllPoints(GPX source, List<WayPoint> allPoints) {
+        source.tracks()
+                .flatMap(Track::segments)
+                .findFirst()
+                .map(TrackSegment::points).orElse(Stream.empty())
+                .forEach(allPoints::add);
     }
 
     /**
