@@ -25,9 +25,7 @@ public class UploadFileController extends Controller {
     private static final String CUSTOM_ERROR_MESSAGE = "o_o: something went wrong";
     private static final Logger LOGGER = LogManager.getLogger("GLOBAL");
 
-    public Result renderUploadFormPage() {
-        return ok(uploadform.render());
-    }
+    public Result renderUploadFormPage() { return ok(uploadform.render()); }
 
     /**
      * Passes uploaded file to static method {@link GpxDeGlitcher#smooth(java.lang.String, double, boolean)},
@@ -67,5 +65,4 @@ public class UploadFileController extends Controller {
         Storage.gpxResult = smooth(filepath, desiredCutoff, isVertical);
         return Storage.gpxResult != null;
     }
-
 }
